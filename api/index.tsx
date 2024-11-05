@@ -163,48 +163,10 @@ export const config = {
 export const app = new Frog<{ State: AppState }>({
   basePath: "/api",
   title: "DEVCON Side Events",
+  ui: { vars },
   initialState: {
     currentEventIndex: 0,
   },
-  ui: { vars },
-});
-
-// Add an image handler for the initial frame
-app.image("/initial", (c) => {
-  return c.res({
-    headers: {
-      "Cache-Control": "public, max-age=0",
-    },
-    image: (
-      <Box grow backgroundColor="background" padding="32">
-        <VStack gap="8" alignItems="center">
-          <Text
-            color="frost1"
-            size="16"
-            tracking="2"
-            weight="600"
-            align="center"
-          >
-            DEVCON SIDE EVENTS
-          </Text>
-
-          <Heading
-            color="text"
-            size="48"
-            align="center"
-            weight="700"
-            font="display"
-          >
-            {events[0].name}
-          </Heading>
-
-          <Text color="frost4" size="32" weight="600" align="center">
-            {events[0].date}
-          </Text>
-        </VStack>
-      </Box>
-    ),
-  });
 });
 
 app.frame("/", (c) => {
@@ -219,26 +181,32 @@ app.frame("/", (c) => {
     }
   });
 
-  // If no button has been pressed yet (initial state), use the image handler
-  if (!buttonValue) {
-    return c.res({
-      image: "/initial",
-      intents: [
-        <Button value="next">Next ▶</Button>,
-        <Button.Link href={events[0].registrationLink}>🎟 Ticket</Button.Link>,
-        <Button.Link href={events[0].mapLink}>🗺 Map</Button.Link>,
-      ],
-    });
-  }
-
-  // For subsequent frames, use the dynamic text-based layout
-  const currentIndex = state?.currentEventIndex ?? 0;
-  const currentEvent = events[currentIndex];
-  const theme = getThemeVariation(currentIndex);
+  const currentEvent = events[state.currentEventIndex];
+  const theme = getThemeVariation(state.currentEventIndex);
 
   return c.res({
     image: (
       <Box grow backgroundColor="background" padding="32">
+        {/* Decorative background elements */}
+        <Box
+          position="absolute"
+          right="32"
+          top="32"
+          width="64"
+          height="64"
+          backgroundColor={theme.accent}
+          opacity="0.1"
+        />
+        <Box
+          position="absolute"
+          left="32"
+          bottom="32"
+          width="64"
+          height="64"
+          backgroundColor={theme.secondary}
+          opacity="0.1"
+        />
+
         <VStack gap="8" alignItems="center">
           <Text
             color={theme.accent}
@@ -291,12 +259,8 @@ app.frame("/", (c) => {
   });
 });
 
-// Development handling
-if (process.env.NODE_ENV === "development") {
-  devtools(app, { serveStatic });
-} else {
-  devtools(app);
-}
-
+// Add Vercel handlers
 export const GET = handle(app);
 export const POST = handle(app);
+
+devtools(app, { serveStatic });

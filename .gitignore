@@ -20,3 +20,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 .vercel
+
+# frog
+.frog   
+
+# env
+.env
