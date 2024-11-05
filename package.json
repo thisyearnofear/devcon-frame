@@ -1,0 +1,19 @@
+{
+  "name": "devcon-side-events",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "frog vercel-build",
+    "dev": "frog dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "@hono/node-server": "latest",
+    "frog": "latest",
+    "hono": "^4"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "vercel": "latest"
+  }
+}
